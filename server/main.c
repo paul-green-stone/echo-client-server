@@ -84,7 +84,6 @@ int main(int argc, char** argv) {
             printf("%sUnable to get client address.%s\n", ANSI_COLOR_RED, ANSI_RESET_ALL);
         }
 
-
         serve_TCP_client(client_sock);
     }
 }

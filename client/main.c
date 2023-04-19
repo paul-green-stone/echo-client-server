@@ -76,34 +76,41 @@ int main(int argc, char** argv) {
     echo_str_len = strlen(echo_str);
 
 
-    /* Send the string to the server */
-    if ((bytes_sent = send(sock, echo_str, echo_str_len, 0)) < 0) {
-        die_with_sys_msg("send() failed");
-    }
-    else if (bytes_sent != echo_str_len) {
-        die_with_user_msg("send()", "sent unexpected number of bytes");
-    }
+    while (1) {
+        memset(buffer, 0, strlen(buffer));
 
+        printf("%s> %s", ANSI_COLOR_CYAN, ANSI_RESET_ALL);
 
-    /* Receive the same string back from the server */
-    printf("Received: ");
+        /* Take input */
+        fgets(buffer, BUFSIZ - 1, stdin);
+        /* Add a line termination character */
+        buffer[strlen(buffer) - 1] = '\0';
 
-    while (total_bytes_rcvd < echo_str_len) {
-        if ((bytes_rcvd = recv(sock, buffer, BUFSIZ - 1, 0)) < 0) {
-            die_with_sys_msg("recv() failed");
+        /* Send a message to the server */
+        if ((bytes_sent = write(sock, buffer, strlen(buffer))) < 0) {
+            die_with_sys_msg("write() failed");
         }
-        else if (bytes_rcvd == 0) {
-            die_with_user_msg("recv()", "connection closed prematurely");
+        else if (bytes_sent != strlen(buffer)) {
+            die_with_user_msg("write()", "sent unexpected number of bytes");
         }
 
-        /* Keep tally of total bytes */
-        total_bytes_rcvd += bytes_rcvd;
-        buffer[bytes_rcvd] = '\0';
+        while (total_bytes_rcvd < strlen(buffer)) {
+            memset(buffer, 0, strlen(buffer));
 
-        printf("%s", buffer);
+            if ((bytes_rcvd = read(sock, buffer, BUFSIZ)) == -1) {
+                die_with_sys_msg("read() failed");
+            }
+            else if (bytes_rcvd == 0) {
+                die_with_user_msg("read()", "connection closed prematurely");
+            }
+
+            /* Keep tally of total bytes */
+            total_bytes_rcvd += bytes_rcvd;
+            buffer[bytes_rcvd] = '\0';
+        }
+        
+        printf("%sServer:%s %s\n", ANSI_COLOR_BLUE, ANSI_RESET_ALL, buffer);
     }
-
-    printf("\n");
 
     close(sock);
     exit(0);

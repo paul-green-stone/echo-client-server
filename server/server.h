@@ -10,3 +10,7 @@
 #include "../helper.h"
 
 void serve_TCP_client(int sock);
+
+void send_TCP_hello_msg(int sock);
+
+void log_TCP_request(void);
