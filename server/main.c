@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     /* Socket descriptor for server */
     int server_sock;
     /* Local address */
-    struct sockaddr_in server_addr;
+    struct sockaddr_in6 server_addr;
 
 
     /* Test for correct number of arguments */
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
 
     /* Create a socket for incoming connections */
-    if ((server_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+    if ((server_sock = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         die_with_sys_msg("socket() failed");
     }
 
@@ -40,11 +40,11 @@ int main(int argc, char** argv) {
     /* Zero out the structure */
     memset(&server_addr, 0, sizeof(server_addr));
     /* IPv4 address family */
-    server_addr.sin_family = AF_INET;
+    server_addr.sin6_family = AF_INET6;
     /* Any incoming interface */
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_addr.sin6_addr = in6addr_any;
     /* Local port */
-    server_addr.sin_port = htons(server_port);
+    server_addr.sin6_port = htons(server_port);
 
 
     /* Bind to the local port */
@@ -62,13 +62,13 @@ int main(int argc, char** argv) {
     /* Wait for a client to connect */
     for (; ;) {
         /* Client address */
-        struct sockaddr_in client_addr;
+        struct sockaddr_in6 client_addr;
         /* Length of client address structure (in-out parameter) */
         socklen_t client_addr_len = sizeof(client_addr);
         /* Client socket */
         int client_sock;
         /* String to contain client address */
-        char client_name[INET_ADDRSTRLEN];
+        char client_name[INET6_ADDRSTRLEN];
 
 
         /* Wait for a client to connect */
@@ -77,8 +77,8 @@ int main(int argc, char** argv) {
         }
 
 
-        if (inet_ntop(AF_INET, &client_addr.sin_addr.s_addr, client_name, sizeof(client_name)) != NULL) {
-            printf("%sHandling client%s %s/%d\n", ANSI_COLOR_GREEN, ANSI_RESET_ALL, client_name, ntohs(client_addr.sin_port));
+        if (inet_ntop(AF_INET6, &client_addr.sin6_addr.s6_addr, client_name, sizeof(client_name)) != NULL) {
+            printf("%sHandling client%s %s/%d\n", ANSI_COLOR_GREEN, ANSI_RESET_ALL, client_name, ntohs(client_addr.sin6_port));
         }
         else {
             printf("%sUnable to get client address.%s\n", ANSI_COLOR_RED, ANSI_RESET_ALL);
