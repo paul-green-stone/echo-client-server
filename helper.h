@@ -1,7 +1,12 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define ANSI_RESET_ALL          "\x1b[0m"
 
@@ -30,3 +35,5 @@
 void die_with_user_msg(const char* msg, const char* details);
 
 void die_with_sys_msg(const char* msg);
+
+void print_sock_addr(const struct sockaddr* address, FILE* stream);
