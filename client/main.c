@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 
 #include "../helper.h"
+#include "client.h"
 
 int main(int argc, char** argv) {
 
@@ -20,38 +21,15 @@ int main(int argc, char** argv) {
         die_with_user_msg("Parameter(s)", "<Server Address> [<Server Port>]");
     }
 
-    struct sockaddr_in6 server_addr;                    /* Server address structure */
-
     char buffer[BUFSIZ];                                /* I/O buffer */
-
-    /* Zero out the structure */
-    memset(&server_addr, 0, sizeof(server_addr));
-
-    server_addr.sin6_family = AF_INET6;                  /* IPv6 address family */
-
-    int result;
-    if ((result = inet_pton(AF_INET6, argv[1], &server_addr.sin6_addr.s6_addr)) == 0) {
-        die_with_user_msg("inet_pton() failed", "invalid address string");
-    }
-    else if (result < 0) {
-        die_with_sys_msg("socket() failed");
-    }
-
-    server_addr.sin6_port = htons((argc == 3) ? atoi(argv[2]) : 7);
 
     /* ================================================================ */
 
 
     int client_sock;                                    /* Socket descriptor for client */
     
-    /* Create a reliable, stream socket using TCP */
-    if ((client_sock = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-        die_with_sys_msg("socket() failed");
-    }
-
-    /* Establish the connection to the echo server */
-    if (connect(client_sock, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
-        die_with_sys_msg("connect() failed");
+    if ((client_sock = setup_TCP_client(argv[1], argv[2])) < 0) {
+        die_with_user_msg("SetupTCPClientSocket() failed", "unable to connect");
     }
 
     /* ================================================================ */

@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
 #include <errno.h>
+#include <netdb.h>
+
+/* Maximum outstanding connection requests */
+#define MAX_PENDING 5
 
 #define ANSI_RESET_ALL          "\x1b[0m"
 
@@ -30,3 +40,5 @@
 void die_with_user_msg(const char* msg, const char* details);
 
 void die_with_sys_msg(const char* msg);
+
+extern void print_sock_addr(const struct sockaddr* address, FILE* stream);
