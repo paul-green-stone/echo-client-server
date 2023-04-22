@@ -89,5 +89,6 @@ int main(int argc, char** argv) {
     }
 
     close(client_sock);
-    exit(0);
+    
+    return EXIT_SUCCESS;
 }

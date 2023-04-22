@@ -71,4 +71,8 @@ int main(int argc, char** argv) {
 
         serve_TCP_client(client_sock);
     }
+
+    close(server_sock);
+
+    return EXIT_SUCCESS;
 }
