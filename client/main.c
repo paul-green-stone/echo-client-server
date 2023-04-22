@@ -32,6 +32,8 @@ int main(int argc, char** argv) {
         die_with_user_msg("SetupTCPClientSocket() failed", "unable to connect");
     }
 
+    printf("%d\n", client_sock);
+
     /* ================================================================ */
 
 

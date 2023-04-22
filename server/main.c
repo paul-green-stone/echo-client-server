@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
     for (; ;) {
         int client_sock;                                        /* Client socket */
 
-        client_sock = accept_TCP_connection(server_sock);
-
-        serve_TCP_client(client_sock);
+        if ((client_sock = accept_TCP_connection(server_sock)) > 0) {
+            serve_TCP_client(client_sock);
+        }
 
         close(client_sock);
     }

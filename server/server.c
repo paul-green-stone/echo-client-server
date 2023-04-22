@@ -52,15 +52,15 @@ int setup_TCP_server(const char* service) {
 
     address_criteria.ai_family = AF_UNSPEC;             /* Any address family */
     address_criteria.ai_flags = AI_PASSIVE;             /* Accept on any address/port */
-    address_criteria.ai_socktype = SOCK_DGRAM;          /* Only stream sockets */
-    address_criteria.ai_protocol = IPPROTO_UDP;         /* Only TCP protocol */
+    address_criteria.ai_socktype = SOCK_STREAM;          /* Only stream sockets */
+    address_criteria.ai_protocol = IPPROTO_TCP;         /* Only TCP protocol */
 
     struct addrinfo* list;                              /* A list of available addresses */
 
     /* ================================================================ */
 
     int result;
-    if ((result = getaddrinfo(NULL, service, NULL, &list)) == 0) {
+    if ((result = getaddrinfo(NULL, service, &address_criteria, &list)) == 0) {
 
     }
     else {

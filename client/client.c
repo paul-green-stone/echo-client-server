@@ -11,8 +11,8 @@ int setup_TCP_client(const char* host, const char* service) {
     memset(&address_criteria, 0, sizeof(address_criteria));
 
     address_criteria.ai_family = AF_UNSPEC;             /* Any address family */
-    address_criteria.ai_socktype = SOCK_DGRAM;          /* Only stream sockets */
-    address_criteria.ai_protocol = IPPROTO_UDP;         /* Only TCP protocol */
+    address_criteria.ai_socktype = SOCK_STREAM;          /* Only stream sockets */
+    address_criteria.ai_protocol = IPPROTO_TCP;         /* Only TCP protocol */
 
     struct addrinfo* list;                              /* A list of available addresses */
 
@@ -20,10 +20,7 @@ int setup_TCP_client(const char* host, const char* service) {
 
 
     int result;
-    if ((result = getaddrinfo(host, service, NULL, &list)) == 0) {
-
-    }
-    else {
+    if ((result = getaddrinfo(host, service, &address_criteria, &list)) != 0) {
         fprintf(stderr, "getaddrinfo() failed %s\n", gai_strerror(result));
     }
 
@@ -34,7 +31,6 @@ int setup_TCP_client(const char* host, const char* service) {
         }
 
         if (connect(client_sock, address->ai_addr, address->ai_addrlen) == 0) {
-            printf("Connected!\n");
             break ;
         }
 
